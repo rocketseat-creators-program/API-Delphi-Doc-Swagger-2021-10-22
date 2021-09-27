@@ -1,0 +1,13 @@
+{
+	"name": "todo",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./",
+	"projects": [],
+	"dependencies": {
+		"github.com/hashload/horse": "^v2.0.14",
+		"github.com/hashload/jhonson": "^1.1.2",
+		"https://github.com/hashload/handle-exception": "^0.1.4"
+	}
+}

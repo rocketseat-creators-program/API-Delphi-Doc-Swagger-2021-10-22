@@ -1,22 +1,24 @@
 <img src="https://storage.googleapis.com/golden-wind/experts-club/capa-github.svg" />
 
-# Título
+# Documentando APIs REST no Delphi com Horse e Swagger
 
-Introdução ao seu projeto. Apresentado por [Seu nome][1].
+Neste projeto é apresentado como desenvolver uma documentação para APIs Delphi criadas com o Framework Web [Horse][3], no padrão [Swagger][4], usando o middleware [GBSwagger][2].
+Neste repositório estão dois projetos um já com a documentação implementada e o outro sem a documentação, usados na demonstração da aula.
 
-> __Atenção__: Este é o projeto <template/completo>, se você está procurando o projeto de <completo/template>, vá para [este repositório](https://github.com/rocketseat-experts-club/<seu projeto aqui>)
+Apresentado por [Alessandro Dutra de Andrade (Cachopaweb)][1].
 
-## Instalação
-
-1. Use este template
-2. Edite o README.md
-3. Adicione seus arquivos
-
+## Instalação das dependências usando Boss
+```sh
+boss install
+```
 ## Expert
 
-| [<img src="https://github.com/<seu handle>.png" width="75px;"/>][1] |
+| [<img src="https://github.com/cachopaweb.png" width="75px;"/>][1] |
 | :-: |
 |[Creator][1]|
 
 
-[1]: https://seusite.com.br
+[1]: https://github.com/cachopaweb
+[2]: https://github.com/gabrielbaltazar/gbswagger
+[3]: https://github.com/HashLoad/horse
+[4]: https://swagger.io/
