@@ -8,8 +8,7 @@ uses
   System.Generics.Collections,
   SysUtils,
   System.Json,
-  UnitTodo.Model,
-  Horse.GBSwagger;
+  UnitTodo.Model;
 
 type
   TTodoController = class
