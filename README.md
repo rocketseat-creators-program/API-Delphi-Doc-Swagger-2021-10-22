@@ -1,4 +1,4 @@
-<img src="https://storage.googleapis.com/golden-wind/experts-club/capa-github.svg" />
+<img src="https://i.imgur.com/XSFK6Br.png" />
 
 # Documentando APIs REST no Delphi com Horse e Swagger
 
