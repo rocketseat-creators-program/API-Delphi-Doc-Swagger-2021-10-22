@@ -54,7 +54,7 @@ begin
   user := TUser.fromJson(oJson);
   user.id := CreateGuuid;
   UserRepository.Users.Add(user);
-  Res.Send<TJSONObject>(user.toJson);
+  Res.Send<TJSONObject>(user.toJson).Status(THTTPStatus.Created);
 end;
 
 class procedure TUsersController.GetAllUsers(Req: THorseRequest; Res: THorseResponse; Next: TProc);
@@ -84,7 +84,7 @@ initialization
       .Tag('Users')
         .GET('List all', 'List all Users')
           .AddResponse(200, 'Ok')
-            .Schema(TUser)
+            .Schema(TUserResponse)
             .IsArray(True)
           .&End
           .AddResponse(500, 'Internal server error').&End
@@ -93,8 +93,8 @@ initialization
           .AddParamBody('New User', 'New User')
             .Schema(TUserResquest)
           .&End
-          .AddResponse(200, 'Ok')
-            .Schema(TUser)
+          .AddResponse(201, 'Created')
+            .Schema(TUserResponse)
           .&End
           .AddResponse(404, 'User not found').&End
           .AddResponse(400, 'Users already exists').&End

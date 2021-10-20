@@ -17,6 +17,19 @@ type
     property username: string read Fusername write Fusername;
   end;
 
+  TUserResponse = class
+  private
+    Fid: string;
+    Fname: string;
+    Fusername: string;
+    Ftodos: TObjectList<TTodo>;
+  published
+    property id: string read Fid write Fid;
+    property name: string read Fname write Fname;
+    property username: string read Fusername write Fusername;
+    property todos: TObjectList<TTodo> read Ftodos write Ftodos;
+  end;
+
   TUser = class
   private
     Fid: string;

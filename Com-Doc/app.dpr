@@ -28,6 +28,16 @@ begin
   TUsersController.Registrar;
   TTodoController.Registrar;
 
+  Swagger
+    .Info
+      .Title('API para controle de Tarefas')
+      .Contact
+        .Name('Alessandro Dutra')
+        .Email('cachopaweb@gmail.com')
+        .URL('https://meusite.com.br')
+      .&End
+    .&End;
+
   THorse.Listen(9000,
   procedure(App: THorse)
   begin

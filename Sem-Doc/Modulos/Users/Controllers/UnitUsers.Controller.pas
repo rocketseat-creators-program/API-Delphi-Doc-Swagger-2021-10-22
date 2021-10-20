@@ -53,7 +53,7 @@ begin
   user := TUser.fromJson(oJson);
   user.id := CreateGuuid;
   UserRepository.Users.Add(user);
-  Res.Send<TJSONObject>(user.toJson);
+  Res.Send<TJSONObject>(user.toJson).Status(THTTPStatus.Created);
 end;
 
 class procedure TUsersController.GetAllUsers(Req: THorseRequest; Res: THorseResponse; Next: TProc);

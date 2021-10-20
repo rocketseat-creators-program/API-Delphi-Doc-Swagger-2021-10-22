@@ -5,6 +5,15 @@ uses
   System.Json;
 
 type
+  TTodoRequest = class
+  private
+    Ftitle: string;
+    Fdeadline: TDateTime;
+  published
+    property title: string read Ftitle write Ftitle;
+    property deadline: TDateTime read Fdeadline write Fdeadline;
+  end;
+
   TTodo = class
   private
     Fid: string;

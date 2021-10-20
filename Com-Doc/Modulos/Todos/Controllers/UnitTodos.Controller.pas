@@ -34,22 +34,17 @@ var
   oJson: TJSONObject;
   UsersRepository: TUsersRepository;
   user: TUser;
-  id: string;
+  IdUser: string;
   indice: Integer;
   todos: TArray<TTodo>;
   todo: TTodo;
 begin
-  id := Req.Headers['id'];
+  IdUser := Req.Headers['id'];
   oJson := Req.Body<TJSONObject>;
-  if not Assigned(oJson) then
-  begin
-    Res.Send<TJSONObject>(TJSONObject.Create.AddPair('message', 'Todo not found')).Status(THTTPStatus.BadRequest);
-    Exit;
-  end;
   UsersRepository := TUsersRepository.New;
   for user in UsersRepository.Users do
   begin
-    if user.id = id then
+    if user.id = IdUser then
     begin
       todos := user.todos;
       indice := Length(todos);
@@ -68,7 +63,7 @@ class procedure TTodoController.DeleteTodo(Req: THorseRequest;  Res: THorseRespo
 var
   UsersRepository: TUsersRepository;
   user: TUser;
-  id: string;
+  idTodo: string;
   IdUser: string;
   TodoExists: Boolean;
   i: Integer;
@@ -77,12 +72,7 @@ var
   IndexUser: Integer;  
 begin
   IdUser := Req.Headers['id'];
-  if not Req.Params.ContainsKey('id') then
-  begin
-    Res.Send<TJSONObject>(TJSONObject.Create.AddPair('message', 'Id not informed')).Status(THTTPStatus.BadRequest);
-    Exit;
-  end;
-  Id := Req.Params['id'];              
+  idTodo := Req.Params['id'];
   UsersRepository := TUsersRepository.New;
   TodoExists := False;
   for user in UsersRepository.Users do
@@ -91,7 +81,7 @@ begin
     begin
       for i := Low(user.todos) to High(user.todos) do
       begin
-        if user.todos[i].id = Id then
+        if user.todos[i].id = idTodo then
         begin        
            TodoExists := True;
            Indice := i;
@@ -120,7 +110,7 @@ class procedure TTodoController.DoneTodo(Req: THorseRequest; Res: THorseResponse
 var
   UsersRepository: TUsersRepository;
   user: TUser;
-  id: string;
+  idTodo: string;
   IdUser: string;
   TodoExists: Boolean;
   i: Integer;
@@ -130,12 +120,7 @@ var
   Todo: TTodo;
 begin
   IdUser := Req.Headers['id'];
-  if not Req.Params.ContainsKey('id') then
-  begin
-    Res.Send<TJSONObject>(TJSONObject.Create.AddPair('message', 'Id not informed')).Status(THTTPStatus.BadRequest);
-    Exit;
-  end;
-  Id := Req.Params['id'];
+  idTodo := Req.Params['id'];
   UsersRepository := TUsersRepository.New;
   TodoExists := False;
   for user in UsersRepository.Users do
@@ -144,7 +129,7 @@ begin
     begin
       for i := Low(user.todos) to High(user.todos) do
       begin
-        if user.todos[i].id = Id then
+        if user.todos[i].id = idTodo then
         begin
            TodoExists := True;
            Indice := i;
@@ -191,7 +176,7 @@ class procedure TTodoController.UpdateTodo(Req: THorseRequest; Res: THorseRespon
 var
   UsersRepository: TUsersRepository;
   user: TUser;
-  id: string;
+  idTodo: string;
   IdUser: string;
   TodoExists: Boolean;
   i: Integer;
@@ -201,13 +186,8 @@ var
   Todo: TTodo;
 begin
   IdUser := Req.Headers['id'];
-  Id := Req.Params['id'];
+  idTodo := Req.Params['id'];
   jsonTodo := Req.Body<TJSONObject>;//parse json object
-  if not Assigned(jsonTodo) then
-  begin
-    Res.Send<TJSONObject>(TJSONObject.Create.AddPair('message', 'Todo not found')).Status(THTTPStatus.NotFound);
-    Exit;
-  end;
   UsersRepository := TUsersRepository.New;
   TodoExists := False;
   for user in UsersRepository.Users do
@@ -216,7 +196,7 @@ begin
     begin
       for i := Low(user.todos) to High(user.todos) do
       begin
-        if user.todos[i].id = Id then
+        if user.todos[i].id = idTodo then
         begin
            TodoExists := True;
            Indice := i;
@@ -238,7 +218,7 @@ begin
     todo.deadline := jsonTodo.GetValue<TDateTime>('deadline');
     UsersRepository.Users[IndexUser].todos[Indice] := Todo;
   end;
-  Res.Send<TJSONObject>(jsonTodo).Status(THTTPStatus.OK);
+  Res.Send<TJSONObject>(Todo.toJson).Status(THTTPStatus.OK);
 end;
 
 class procedure TTodoController.Registrar;
@@ -246,20 +226,12 @@ begin
   THorse.Get('/todos', checksExistsUserAccount, GetAllTodos)
         .Post('/todos', checksExistsUserAccount, CreateTodo)
         .Put('/todos/:id', checksExistsUserAccount, UpdateTodo)
-        .Patch('/todos/:id/done', checksExistsUserAccount, DoneTodo)
         .Delete('/todos/:id', checksExistsUserAccount, DeleteTodo)
+        .Patch('/todos/:id/done', checksExistsUserAccount, DoneTodo);
 end;
 
 initialization
   Swagger
-    .Info
-      .Title('API para controle de todos')
-      .Contact
-        .Name('Alessandro Dutra')
-        .Email('cachopaweb@gmail.com')
-        .URL('https://meusite.com.br')
-      .&End
-    .&End
     .Path('todos')
       .Tag('Todos')
       .GET('List All', 'List All todos')
@@ -278,7 +250,7 @@ initialization
         .&End
         .AddParamBody('Todo data', 'Todo data')
           .Required(True)
-          .Schema(TTodo)
+          .Schema(TTodoRequest)
         .&End
         .AddResponse(201, 'Created')
           .Schema(TTodo)
@@ -287,7 +259,7 @@ initialization
         .AddResponse(500, 'Internal server error').&End
       .&End
     .&End
-    .Path('/todos/:id')
+    .Path('/todos/{id}')
       .Tag('Todos')
       .PUT('Update Todo', 'Update specific todo')
           .AddParamHeader('id', 'user id')
@@ -299,8 +271,11 @@ initialization
             .Schema(SWAG_STRING)
           .&End
           .AddParamBody('Todo', 'Todo json object')
-            .Schema(TTodo)
+            .Schema(TTodoRequest)
             .Required(true)
+          .&End
+          .AddResponse(200, 'Ok')
+            .Schema(TTodo)
           .&End
           .AddResponse(400, 'User not exists').&End
           .AddResponse(404, 'Todo not found').&End
@@ -321,7 +296,7 @@ initialization
         .AddResponse(500, 'Internal server error').&End
       .&End
     .&End
-    .Path('/todos/:id/done')
+    .Path('/todos/{id}/done')
       .Tag('Todos')
       .PATCH('Set todo done', 'Update todo for done')
           .AddParamHeader('id', 'user id')
